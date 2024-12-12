@@ -44,7 +44,7 @@ Fill in the `.env` file with your Bluesky account name and app password.
 
 Log into your DataStax account and open the [Langflow dashboard](https://astra.datastax.com/langflow). Create a flow that has a chat input, does some processing in the middle, and returns the result as a chat output.
 
-If you're getting started with Langflow, the _Basic Prompting_ template is the simplest generative AI flow that will work. Make sure you fill in the model component with an API key.
+If you're getting started with Langflow, the [_Basic Prompting_ template](https://docs.langflow.org/starter-projects-basic-prompting) is the simplest generative AI flow that will work. Make sure you fill in the model component with an API key.
 
 Once you are happy with the flow, click on the _API_ button. This will show you how to access the flow via API. You will need the URL, which is most easily found on the cURL tab. You will also need an API token, which you can generate from the modal.
 
