@@ -6,13 +6,18 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "dev": "node ."
+    "start": "node --env-file=.env .",
+    "dev": "tsx watch --env-file=.env ./src/index.ts"
   },
   "author": "Phil Nash <phil.nash@datastax.com> (https://datastax.com)",
   "license": "MIT",
   "description": "",
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@skyware/bot": "^0.3.8"
   }
 }
