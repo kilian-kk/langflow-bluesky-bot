@@ -2,9 +2,17 @@
 
 This is an example of a [Bluesky](https://bsky.social/about) bot that responds to mentions and replies by passing the post text to a flow built with [Langflow](https://docs.datastax.com/en/langflow/index.html) and responding with the result of the flow.
 
+- [The bot](#the-bot)
+  - [Prerequisites](#prerequisites)
+  - [Preparation](#preparation)
+    - [Langflow](#langflow)
+  - [Running the bot](#running-the-bot)
+
 ## The bot
 
 The bot uses the [AT Protocol](https://atproto.com/) to communicate with Bluesky and is powered by [@skyware/bot](https://skyware.js.org/guides/bot/introduction/getting-started/).
+
+It listens for mentions and replies to an account you provide. When it receives an incoming post it will trigger a Langflow flow with the text from the post, and reply using the output from the flow.
 
 ### Prerequisites
 
