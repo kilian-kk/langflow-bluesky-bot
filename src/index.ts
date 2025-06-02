@@ -8,16 +8,24 @@ await bot.login({
 
 bot.on("reply", respondToIncoming);
 bot.on("mention", respondToIncoming);
-console.log(
-  `[✓] @${process.env.BSKY_USERNAME} is listening for mentions and replies.\n`
-);
+console.log(`[✓] @${process.env.BSKY_USERNAME} is listening for mentions and replies.\n`);
 
 async function respondToIncoming(post: Post) {
   console.log(`[>] @${post.author.handle}: ${post.text}\n`);
+  console.log(`    Post URI: ${post.uri}`);
+  console.log(`    Post CID: ${post.cid}\n`);
+
   try {
-    const text = await getLangflowResponse(post.text);
-    console.log(`[<] @${process.env.BSKY_USERNAME}: ${text}\n`);
-    await post.reply({ text });
+    const response = await getLangflowResponse(post.text);
+    if (response.reply) {
+      await post.reply({ text: response.reply_text });
+    }
+    if (response.like) {
+      await post.like();
+    }
+    if (response.repost) {
+      await post.repost();
+    }
   } catch (error) {
     console.error(error);
   }
@@ -32,7 +40,7 @@ async function getLangflowResponse(text: string) {
   const response = await fetch(process.env.LANGFLOW_URL!, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.LANGFLOW_TOKEN!}`,
+      // Authorization: `Bearer ${process.env.LANGFLOW_TOKEN!}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -40,6 +48,6 @@ async function getLangflowResponse(text: string) {
   if (!response.ok) {
     throw new Error("Could not respond", { cause: response });
   }
-  const data = (await response.json()) as any;
-  return data.outputs[0].outputs[0].artifacts.message;
+  const data = await response.json();
+  return JSON.parse(data.outputs[0].outputs[0].artifacts.message);
 }
