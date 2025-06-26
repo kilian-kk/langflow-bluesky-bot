@@ -23,12 +23,22 @@ async function hilNode(
 
   try {
     const action = JSON.parse(state.graph_output);
+    const suggestedAction = JSON.stringify({
+      reply: action.data.graph_output.reply,
+      like: action.data.graph_output.like,
+      repost: action.data.graph_output.repost,
+      reply_text: action.data.graph_output.reply_text,
+    });
     console.log("Vorgeschlagene Aktion:\n", action);
+    console.log("Vorgeschlagene Aktion:\n", suggestedAction);
     const approval = await rl.question("Genehmigen? (y/n): ");
 
     if (approval.toLowerCase() === "y") {
       console.log("Aktion angenommen. Alle Interaktionen werden ausgeführt.");
-      return new Command({ goto: END });
+      return {
+        ...state,
+        graph_output: suggestedAction,
+      };
     } else {
       const disabledAction = JSON.stringify({
         reply: false,
@@ -72,8 +82,9 @@ async function respondToIncoming(post: Post) {
   console.log(`    Post CID: ${post.cid}\n`);
 
   try {
-    const response_raw = await getLanggraphResponse(post.text);
-    const response = response_raw.data.graph_output;
+    const response = await getLanggraphResponse(post.text);
+    console.log("Response raw: " + JSON.stringify(response));
+    // const response = response_raw.data.graph_output;
     console.log(response);
     if (response.reply) {
       await post.reply({ text: response.reply_text });
@@ -89,10 +100,6 @@ async function respondToIncoming(post: Post) {
   }
 }
 
-// async function getLanggraphResponse(text: string) {
-//   const result = await graph.invoke({ user_input: text });
-//   return JSON.parse(result.graph_output);
-// }
 
 async function getLanggraphResponse(text: string) {
   const incoming_data = JSON.stringify({ input_data: text });
