@@ -60,7 +60,7 @@ async function hilNode(
         };
       } else if (approval.toLowerCase() === "e") {
         const editedText = await rl.question(
-          "Bitte neuen Antworttext eingeben:\n"
+          "Bitte neuen Antworttext eingeben/Antworttext korrigieren:\n"
         );
         action.data.graph_output.reply_text = editedText;
         console.log("Antworttext aktualisiert:\n", editedText);
@@ -90,19 +90,22 @@ await bot.login({
 bot.on("reply", respondToIncoming);
 bot.on("mention", respondToIncoming);
 console.log(
-  `[✓] @${process.env.BSKY_USERNAME} is listening for mentions and replies.\n`
+  `[✓] @${process.env.BSKY_USERNAME} lauscht auf Erwähnungen und Antworten.\n`
 );
 
 async function respondToIncoming(post: Post) {
   console.log(`[>] @${post.author.handle}: ${post.text}\n`);
-  console.log(`    Post URI: ${post.uri}`);
-  console.log(`    Post CID: ${post.cid}\n`);
+  //console.log(`    Post URI: ${post.uri}`);
+  //console.log(`    Post CID: ${post.cid}\n`);
 
   try {
     const response = await getLanggraphResponse(post.text);
 
-    if (response.reply) {
-      console.log("posting reply...");
+    if (response.reply && response.reply_text == null) {
+      console.log("[i] Skipping reply: no reply_text found.");
+    }
+
+    if (response.reply && response.reply_text) {
       await post.reply({ text: response.reply_text });
     }
     if (response.like) {
@@ -112,18 +115,18 @@ async function respondToIncoming(post: Post) {
       await post.repost();
     }
   } catch (error) {
-    console.error(error);
+    if (error instanceof Error) {
+      console.error(`[✗] ${error.name}`);
+    }
   }
 
   console.log(
-    `[✓] Finished processing mention/reply from @${post.author.handle}. Listening for more...`
+    `[✓] Antwort von @${post.author.handle} verarbeitet. Lausche weiter...`
   );
 }
 
 async function getLanggraphResponse(text: string) {
   const incoming_data = JSON.stringify({ input_data: text });
-  console.log("incoming data");
-  console.log(incoming_data);
 
   let response;
 
