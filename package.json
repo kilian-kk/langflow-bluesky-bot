@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "start": "node --env-file=.env .",
+    "start": "node --env-file=.env ./dist/src/index.js",
     "dev": "tsx watch --env-file=.env ./src/index.ts"
   },
   "author": "Phil Nash <phil.nash@datastax.com> (https://datastax.com)",
